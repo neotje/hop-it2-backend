@@ -1,0 +1,20 @@
+{
+    "email": "neo@hopjes.net",
+    "password": "$2b$10$csJFHxl08M2R7xzfT6N6L.KqHrqhAABrrHEGgdmD/lOO30A2vIEbW",
+    "personal": {
+        "firstname": "voor",
+        "lastname": "achter"
+    },
+    "permissions": {
+        "group": "admin"
+    },
+    "verification": {
+        "token": "7CyI5QvYPf",
+        "date": 1588168285980,
+        "verified": true
+    },
+    "recovery": {
+        "token": "",
+        "data": null
+    }
+}

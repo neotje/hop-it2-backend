@@ -1,0 +1,11 @@
+{
+  "main": "./mailer.js",
+  "name": "mailer",
+  "version": "1.0.0",
+  "description": "hop-it2 server mail manager",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "neo hop",
+  "license": "ISC"
+}

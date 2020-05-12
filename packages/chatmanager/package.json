@@ -1,0 +1,11 @@
+{
+  "main": "./ChatManager.js",
+  "name": "chatmanager",
+  "version": "1.0.0",
+  "description": "hop-it2 server chat manager",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "neo hop",
+  "license": "ISC"
+}

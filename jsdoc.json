@@ -1,0 +1,29 @@
+{
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc"]
+    },
+    "plugins": ["plugins/markdown"],
+    "source": {
+        "include": ["./"],
+        "exclude": ["./node_modules"],
+        "includePattern": ".js$",
+        "excludePattern": "(node_modules/|docs)_"
+    },
+    "templates": {
+        "referenceTitle": "Hop-IT 2.0",
+        "disableSort": false,
+        "collapse": true,
+        "resources": {
+            "google": "https://www.google.com/"
+        }
+    },
+    "opts": {
+        "encoding": "utf8",
+        "readme": "./readme.md",
+        "destination": "doc/",
+        "tutorials": "./tutorials",
+        "recurse": true,
+        "verbose": true
+    }
+}

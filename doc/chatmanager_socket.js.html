@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: chatmanager/socket.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: chatmanager/socket.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+require('console-stamp')(console, '[HH:MM:ss.l]');
+
+const io = require('socket.io')();
+
+const userManager = require('../usermanager');
+
+/**
+ * @namespace chatSocket
+ */
+
+io.on('connection', socket => {
+    console.log('a client connected');
+
+    if (socket.request.session.user) {
+        console.log('the client is a logged in user.');
+
+        // parse session
+        userManager.parseSession(socket.request.session, (user, err) => {
+            const chatManager = require('../chatmanager');
+            // send message
+            socket.on('sendMessage', (req) => {
+                chatManager.open(req.id, (chat, err) => {
+                    if (!err) {
+                        chat.send(user.id, req.content);
+                    }
+                });
+            });
+
+            // sync chats with client
+            chatManager.getByMember(user.id, chats => {
+                // iterate throug all chats.
+                for (const chat of chats) {
+
+                    chat.onMessage(msg => {
+                        if (msg.sender.id != user.id) {
+                            msg.sender.getPersonal(personal => {
+
+                                /**
+                                 * @event chatSocket#newMessage
+                                 * @type {object} 
+                                 * @property {String} id Origin of message. Chat ID.
+                                 * @property {String} content message content.
+                                 * @property {String} sender sender of the message '{firstname} {lastname}'.
+                                 */
+                                socket.emit("newMessage", {
+                                    id: chat.id,
+                                    content: msg.content,
+                                    sender: `${personal.firstname} ${personal.lastname}`
+                                })
+                            })
+                        }
+                    });
+
+                    for (const member of chat.members) {
+                        if (member.id != user.id) {
+                            var personal = member.personal;
+                            var messages = [];
+
+                            for (const message of chat.messages) {
+                                messages.push(message.toJSON());
+                            }
+
+                            var data = {
+                                id: chat.id,
+                                name: `${personal.firstname} ${personal.lastname}`,
+                                messages: messages,
+                                lastMessage: ''
+                            }
+
+                            if (chat.lastMessage) {
+                                data.lastMessage = chat.lastMessage.toJSON();
+                            }
+
+                            /**
+                             * @event chatSocket#addChat
+                             * @type {object}
+                             * @property {String} id Chat id.
+                             * @property {String} name Chat name (name of reciever) '{firstname} {lastname}'.
+                             * @property {object[]} messages List of messages in this chat. See {@link Message#toJSON}
+                             * @property {String} lastMessage content of last message send in this chat.
+                             */
+                            socket.emit("addChat", data);
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    socket.on('disconnect', () => {
+        console.log('client disconnected');
+
+    });
+});
+
+module.exports = io;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-ChatManager.html">ChatManager</a></li><li><a href="module-DataManager.html">DataManager</a></li><li><a href="module-Mailer.html">Mailer</a></li><li><a href="module-UserManager.html">UserManager</a></li></ul><h3>Namespaces</h3><ul><li><a href="chatSocket.html">chatSocket</a></li></ul><h3>Classes</h3><ul><li><a href="Chat.html">Chat</a></li><li><a href="Document.html">Document</a></li><li><a href="Folder.html">Folder</a></li><li><a href="Member.html">Member</a></li><li><a href="Message.html">Message</a></li><li><a href="User.html">User</a></li></ul><h3>Events</h3><ul><li><a href="chatSocket.html#event:addChat">addChat</a></li><li><a href="chatSocket.html#event:newMessage">newMessage</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-mail-template.html">mail-template</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Tue May 05 2020 10:35:04 GMT+0200 (GMT+02:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
