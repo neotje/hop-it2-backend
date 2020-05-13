@@ -9,7 +9,7 @@ const users = require('../../packages/usermanager');
 router.get('/list', function (req, res) {
     users.parseSession(req.session, (user, err) =>{
         if (err) {
-            res.json({
+            res.status(500).json({
                 error: "user does not exist"
             });
         } else {
@@ -21,17 +21,17 @@ router.get('/list', function (req, res) {
 
                 for (const chat of chats) {
                     for (const member of chat.members) {
-                        if (member.id != "00000000") {
-                            member.getPersonal(personal => {
-                                response.chats.push({
-                                    name: `${personal.firstname} ${personal.lastname}`,
-                                    lastmessage: chat.lastmessage,
-                                    messages: chat.messages
-                                });
+                        if (member.id != user.id) {
+                            response.chats.push({
+                                name: `${member.personal.firstname} ${member.personal.lastname}`,
+                                lastmessage: chat.lastmessage,
+                                messages: chat.messages
                             });
                         }
                     }
                 }
+
+                res.json(response.chats);
             });
         }
     });

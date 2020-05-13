@@ -52,7 +52,7 @@ router.post("/register", function (req, res) {
 
             if (err) {
                 // send error as response if login failed
-                res.json({
+                res.status(500).json({
                     error: err.message
                 });
             } else {
